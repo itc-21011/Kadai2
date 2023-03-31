@@ -27,10 +27,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        quizData.shuffle()
+
+        showNextQuiz()
     }
 
     fun showNextQuiz() {
+        val quiz = quizData[0]
 
+        binding.questionLabel.text = quiz[0]
+
+        rightAnswer = quiz[1]
+
+        quiz.removeAt(0)
+
+        quiz.shuffle()
+
+        binding.answerBtn1.text = quiz[0]
+        binding.answerBtn2.text = quiz[1]
+        binding.answerBtn3.text = quiz[2]
+        binding.answerBtn4.text = quiz[3]
+
+        quizData.removeAt(0)
     }
 
     fun checkAnswer(view: View) {
