@@ -1,8 +1,11 @@
 package jp.ac.it_college.std.s21011.kadai2
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 import jp.ac.it_college.std.s21011.kadai2.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -10,18 +13,19 @@ class MainActivity : AppCompatActivity() {
     private var rightAnswer: String? = null
     private var rightAnswerCount = 0
     private var quizCount = 1
+    private var QUIZ_COUNT = 10
 
     private val quizData = mutableListOf(
-        mutableListOf("北海道", "札幌市", "長崎市", "福島市", "前橋市"),
-        mutableListOf("青森県", "青森市", "広島市", "甲府市", "岡山市"),
-        mutableListOf("岩手県", "盛岡市", "大分市", "秋田市", "福岡市"),
-        mutableListOf("宮城県", "仙台市", "水戸市", "岐阜市", "福井市"),
-        mutableListOf("秋田県", "秋田市", "横浜市", "鳥取市", "仙台市"),
-        mutableListOf("山形県", "山形市", "青森市", "山口市", "奈良市"),
-        mutableListOf("福島県", "福島市", "盛岡市", "新宿区", "京都市"),
-        mutableListOf("茨城県", "水戸市", "金沢市", "名古屋市", "奈良市"),
-        mutableListOf("栃木県", "宇都宮市", "札幌市", "岡山市", "奈良市"),
-        mutableListOf("群馬県", "前橋市", "福岡市", "松江市", "福井市")
+        mutableListOf("１＋１＝？", "２", "１", "０", "１０"),
+        mutableListOf("１✕１＝？", "１", "２", "１０", "１００"),
+        mutableListOf("物事に全力を尽くすこと。", "一生懸命", "一蓮托生", "悪戦苦闘", "意気投合"),
+        mutableListOf("偶然の利益を、労せずに得ようとする欲心。", "射幸心", "慢心", "悪心", "以心伝心"),
+        mutableListOf("裸子植物", "マツ", "たんぽぽ", "アサガオ", "さくら"),
+        mutableListOf("１気圧 = ？ hPa", "１０１３", "１０００", "１００", "１１３"),
+        mutableListOf("本能寺の変はいつ？", "１５８２年", "１６００年", "１１８５年", "１９７２年"),
+        mutableListOf("日本の都道府県の数は？", "４７", "４６", "４８", "４５"),
+        mutableListOf("English の日本語訳は？", "英語", "日本語", "中国語", "韓国語"),
+        mutableListOf("Japan の日本語訳は？", "日本", "アメリカ", "ドイツ", "オーストラリア")
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showNextQuiz() {
+        binding.countLabel.text = getString(R.string.count_label, quizCount)
+
         val quiz = quizData[0]
 
         binding.questionLabel.text = quiz[0]
@@ -53,10 +59,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun checkAnswer(view: View) {
+        val answerBtn: Button = findViewById(view.id)
+        val btnText = answerBtn.text.toString()
 
+        val alertTitle: String
+        if (btnText == rightAnswer) {
+            alertTitle = "正解"
+            rightAnswerCount++
+        }else {
+            alertTitle = "不正解"
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle(alertTitle)
+            .setMessage("答え：$rightAnswer")
+            .setPositiveButton("OK") {dialogInterface, i ->
+                checkQuizCount()
+            }
+            .setCancelable(false)
+            .show()
     }
 
     fun checkQuizCount() {
-
+        if (quizCount == QUIZ_COUNT) {
+            val intent = Intent(this@MainActivity, ResultActivity::class.java)
+            intent.putExtra("RIGHT_ANSWER_COUNT", rightAnswerCount)
+            startActivity(intent)
+        } else {
+            quizCount++
+            showNextQuiz()
+        }
     }
 }
